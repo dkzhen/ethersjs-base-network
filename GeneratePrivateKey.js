@@ -1,4 +1,4 @@
-const ethers = require("ethers");
+const { ethers } = require("ethers");
 const fs = require("fs");
 
 async function generateAccounts(numAccounts) {
@@ -7,6 +7,7 @@ async function generateAccounts(numAccounts) {
   for (let i = 0; i < numAccounts; i++) {
     const wallet = ethers.Wallet.createRandom();
     const account = {
+      id: i + 1, // Add ID to the account
       address: wallet.address,
       privateKey: wallet.privateKey,
       numClaims: 20,
@@ -29,7 +30,7 @@ async function generateAndSaveAccounts(numAccounts, fileName) {
   );
 }
 
-const numAccounts = 2; // Specify the number of accounts to generate
+const numAccounts = 10; // Specify the number of accounts to generate
 const fileName = "config.json"; // Specify the file name for the JSON file
 
 generateAndSaveAccounts(numAccounts, fileName);
