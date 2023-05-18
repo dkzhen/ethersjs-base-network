@@ -1,0 +1,24 @@
+{
+  "name": "web3js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "single": "node SinglePrivateKey",
+    "multi": "node MultiplePrivateKey",
+    "generate": "node GeneratePrivateKey",
+    "send": "node SendEther"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "dotenv": "^16.0.3",
+    "ethers": "5.7.2",
+    "web3": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
