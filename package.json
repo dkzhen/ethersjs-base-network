@@ -7,7 +7,11 @@
     "single": "node SinglePrivateKey",
     "multi": "node MultiplePrivateKey",
     "generate": "node GeneratePrivateKey",
-    "send": "node SendEther"
+    "send": "node SendEther",
+    "cek-balance": "node CheckBalance",
+    "send-multi": "node --experimental-modules SendMultipleToken",
+    "main": "node --experimental-modules main",
+    "send-usdc": "node SendUSDC"
   },
   "keywords": [],
   "author": "",

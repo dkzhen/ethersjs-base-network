@@ -97,7 +97,7 @@ async function claimTokens(privateKey, numClaims) {
 }
 
 // Specify the private keys and the number of times you want to claim tokens
-const configFile = "config-20-daily.json";
+const configFile = "config.json";
 const claimConfigurations = JSON.parse(fs.readFileSync(configFile, "utf8"));
 
 console.log(claimConfigurations);
@@ -113,7 +113,4 @@ async function claimAllTokens() {
 }
 
 // Call the claimAllTokens function
-claimAllTokens();
-setTimeout(() => {
-  claimAllTokens();
-}, 25 * 60 * 60 * 1000);
+module.exports = claimAllTokens;
