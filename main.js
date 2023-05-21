@@ -4,20 +4,17 @@ const sendWBTC = require("./SendWBTC");
 const sendEther = require("./SendEther");
 const claimAllTokens = require("./MultiClaim");
 
-const saldoUSDC = "12000";
-const saldoUSDT = "12000";
-const saldoWBTC = "0.008";
 async function sendBatch() {
   try {
-    // await sendEther();
+    //await sendEther();
     console.log("Success send all ETH");
-    await claimAllTokens();
+    //await claimAllTokens();
     console.log("success claim All Account");
-    await sendUSDC(saldoUSDC);
+    await sendUSDC();
     console.log("Success send all USDC");
-    await sendUSDT(saldoUSDT);
+    await sendUSDT();
     console.log("Success send all USDT");
-    await sendWBTC(saldoWBTC);
+    await sendWBTC();
     console.log("Success send all WBTC");
   } catch (error) {}
 }

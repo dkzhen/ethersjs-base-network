@@ -11,7 +11,7 @@
     "cek-balance": "node CheckBalance",
     "send-multi": "node --experimental-modules SendMultipleToken",
     "main": "node --experimental-modules main",
-    "send-usdc": "node SendUSDC"
+    "send-usdc": "node --experimental-modules SendUSDC"
   },
   "keywords": [],
   "author": "",

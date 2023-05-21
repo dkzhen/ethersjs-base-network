@@ -3,14 +3,12 @@ const dotenv = require("dotenv");
 dotenv.config();
 const fs = require("fs");
 
-async function sendUSDC(saldo) {
+async function sendUSDC() {
   // Load your private keys from the JSON file
   const privateKeys = JSON.parse(fs.readFileSync("config.json"));
 
   // Create an Ethereum provider
   const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER);
-
-  // Connect to the provider using each private key
 
   // USDC contract address and ABI
   const usdcAddress = process.env.SC_USDC;
@@ -170,29 +168,55 @@ async function sendUSDC(saldo) {
   // Specify the recipient address
   const recipientAddress = "0x68F3C80ABd25a7D60060d29a44Be31528480F21C";
 
-  // Specify the amount of USDC to send (in Wei)
-  const amount = ethers.utils.parseUnits(saldo, 18);
+  try {
+    let walletsWithBalance = [];
 
-  // Send USDC tokens from each wallet
-  for (const privateKey of privateKeys) {
-    // Sign the transaction
-    const wallet = new ethers.Wallet(privateKey.privateKey, provider);
-    const gasLimit = 200000;
-    const gasPrice = await provider.getGasPrice();
+    // Check USDC token balance for each wallet
+    for (const privateKey of privateKeys) {
+      const wallet = new ethers.Wallet(privateKey.privateKey, provider);
+      const balance = await usdcContract.balanceOf(wallet.address);
 
-    // Send the transaction with the recommended gas limit
-    const tx = await usdcContract
-      .connect(wallet)
-      .transfer(recipientAddress, amount, {
-        gasLimit: gasLimit,
-        gasPrice: gasPrice,
-      });
+      if (balance && balance.gt(ethers.constants.Zero)) {
+        walletsWithBalance.push({
+          wallet: wallet,
+          balance: balance,
+        });
+        console.log(
+          `Wallet ${wallet.address} has a balance of ${balance.toString()} USDC`
+        );
+      } else {
+        console.log(`Wallet ${wallet.address} has an empty balance of USDC`);
+      }
+    }
 
-    // Wait for the transaction to be mined
-    await tx.wait();
+    if (walletsWithBalance.length === 0) {
+      console.log("No wallets with balance found.");
+      return 0;
+    }
 
-    console.log(`USDC sent from ${wallet.address} to ${recipientAddress}`);
+    for (const { wallet, balance } of walletsWithBalance) {
+      const gasLimit = 200000;
+      const gasPrice = await provider.getGasPrice();
+
+      // Send the transaction only if the balance is greater than zero
+      if (balance && balance.gt(ethers.constants.Zero)) {
+        const tx = await usdcContract
+          .connect(wallet)
+          .transfer(recipientAddress, balance, {
+            gasLimit: gasLimit,
+            gasPrice: gasPrice,
+          });
+
+        // Wait for the transaction to be mined
+        await tx.wait();
+
+        console.log(`USDC sent from ${wallet.address} to ${recipientAddress}`);
+      }
+    }
+
+    return walletsWithBalance.length;
+  } catch (error) {
+    console.error(error);
   }
 }
-
 module.exports = sendUSDC;
