@@ -1,6 +1,7 @@
 const { ethers } = require("ethers");
 const dotenv = require("dotenv");
 const fs = require("fs");
+const sendEtherSingle = require("./SendEtherSingle");
 dotenv.config();
 // Set up provider with your Ethereum network
 const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER);
@@ -80,13 +81,13 @@ const contractABI = [
   },
 ];
 
-async function claimTokens(privateKey, numClaims) {
+async function claimTokens(privateKey, numClaims, gasPrice, gasLimit) {
   try {
     const wallet = new ethers.Wallet(privateKey, provider);
     const contract = new ethers.Contract(contractAddress, contractABI, wallet);
 
     for (let i = 0; i < numClaims; i++) {
-      const tx = await contract.claim(); // Call the claimTokens function of your smart contract
+      const tx = await contract.claim({ gasPrice, gasLimit }); // Call the claimTokens function of your smart contract
       await tx.wait(); // Wait for the transaction to be mined
       console.log(`Tokens claimed - Claim ${i + 1}`);
     }
@@ -95,22 +96,50 @@ async function claimTokens(privateKey, numClaims) {
     console.error("Error claiming tokens:", error);
   }
 }
+async function validateEtherBalance(privateKey, numClaims) {
+  try {
+    const wallet = new ethers.Wallet(privateKey, provider);
+    const balance = await wallet.getBalance();
+    const etherBalance = ethers.utils.formatEther(balance);
+    const gasLimit = 200000;
+    const gasPrice = await provider.getGasPrice();
+    console.log(`Ether balance ${wallet.address}:`, etherBalance);
+
+    if (parseFloat(etherBalance) < 0.005) {
+      console.log(
+        `Ether balance ${wallet.address} is less than 0.005 ETH. Sending Ether...`
+      );
+      const saldoSend = "0.005";
+      await sendEtherSingle(saldoSend, wallet.address); // Modify the parameters as required for the sendEther function
+      console.log(
+        `Ether sent to ${wallet.address} successfully! Claiming tokens... `
+      );
+      await claimTokens(privateKey, numClaims, gasPrice, gasLimit);
+    } else {
+      console.log(
+        `Ether balance ${wallet.address} is greater than or equal to 0.015 ETH. Claiming tokens...`
+      );
+
+      await claimTokens(privateKey, numClaims, gasPrice, gasLimit);
+    }
+  } catch (error) {
+    console.error("Error validating Ether balance:", error);
+  }
+}
 
 // Specify the private keys and the number of times you want to claim tokens
 const configFile = "config.json";
 const claimConfigurations = JSON.parse(fs.readFileSync(configFile, "utf8"));
 
-console.log(claimConfigurations);
-// Call the claimTokens function for each configuration
+// Call the validateEtherBalance function for each configuration
 async function claimAllTokens() {
   try {
     for (const config of claimConfigurations) {
-      await claimTokens(config.privateKey, config.numClaims);
+      await validateEtherBalance(config.privateKey, config.numClaims);
     }
   } catch (error) {
     console.error("Error claiming tokens:", error);
   }
 }
-
 // Call the claimAllTokens function
 module.exports = claimAllTokens;

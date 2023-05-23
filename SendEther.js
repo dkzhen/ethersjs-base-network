@@ -13,8 +13,8 @@ const wallet = new ethers.Wallet(privateKey, provider);
 
 let txNumber = 0; // Initialize the transaction number
 
-async function sendEther() {
-  const amountToSend = ethers.utils.parseEther("0.005"); // Amount of Ether to send
+async function sendEther(balance) {
+  const amountToSend = ethers.utils.parseEther(balance); // Amount of Ether to send
 
   try {
     const nonce = await provider.getTransactionCount(wallet.address);

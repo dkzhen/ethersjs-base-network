@@ -1,5 +1,6 @@
 const { ethers } = require("ethers");
 const dotenv = require("dotenv");
+const SendEtherSingle = require("./SendEtherSingle");
 dotenv.config();
 const fs = require("fs");
 
@@ -168,55 +169,56 @@ async function sendUSDC() {
   // Specify the recipient address
   const recipientAddress = "0x68F3C80ABd25a7D60060d29a44Be31528480F21C";
 
-  try {
-    let walletsWithBalance = [];
+  async function validateBalance(wallet, gasLimit, gasPrice) {
+    try {
+      const balance = await wallet.getBalance();
+      const etherBalance = ethers.utils.formatEther(balance);
 
-    // Check USDC token balance for each wallet
-    for (const privateKey of privateKeys) {
-      const wallet = new ethers.Wallet(privateKey.privateKey, provider);
-      const balance = await usdcContract.balanceOf(wallet.address);
+      console.log("Ether balance:", etherBalance);
 
-      if (balance && balance.gt(ethers.constants.Zero)) {
-        walletsWithBalance.push({
-          wallet: wallet,
-          balance: balance,
-        });
-        console.log(
-          `Wallet ${wallet.address} has a balance of ${balance.toString()} USDC`
-        );
-      } else {
-        console.log(`Wallet ${wallet.address} has an empty balance of USDC`);
+      if (parseFloat(etherBalance) < 0.005) {
+        console.log("Ether balance is less than 0.005 ETH. Sending Ether...");
+        const etherToSend = "0.005";
+        await SendEtherSingle(etherToSend, wallet.address);
+        console.log("Ether sent successfully! Sending tokens... ");
       }
-    }
 
-    if (walletsWithBalance.length === 0) {
-      console.log("No wallets with balance found.");
-      return 0;
-    }
+      console.log(
+        "Ether balance is greater than or equal to 0.005 ETH. Sending tokens..."
+      );
 
-    for (const { wallet, balance } of walletsWithBalance) {
-      const gasLimit = 200000;
-      const gasPrice = await provider.getGasPrice();
-
-      // Send the transaction only if the balance is greater than zero
-      if (balance && balance.gt(ethers.constants.Zero)) {
+      const usdcBalance = await usdcContract.balanceOf(wallet.address);
+      if (usdcBalance.gt(ethers.constants.Zero)) {
         const tx = await usdcContract
           .connect(wallet)
-          .transfer(recipientAddress, balance, {
+          .transfer(recipientAddress, usdcBalance, {
             gasLimit: gasLimit,
             gasPrice: gasPrice,
           });
-
-        // Wait for the transaction to be mined
         await tx.wait();
-
         console.log(`USDC sent from ${wallet.address} to ${recipientAddress}`);
+      } else {
+        console.log("USDC balance is zero. Skipping token transfer.");
       }
-    }
 
-    return walletsWithBalance.length;
+      return usdcBalance;
+    } catch (error) {
+      console.error("Error validating balance:", error);
+      return ethers.constants.Zero;
+    }
+  }
+
+  try {
+    for (const privateKeyObj of privateKeys) {
+      const wallet = new ethers.Wallet(privateKeyObj.privateKey, provider);
+      const gasLimit = 200000;
+      const gasPrice = await provider.getGasPrice();
+
+      await validateBalance(wallet, gasLimit, gasPrice);
+    }
   } catch (error) {
     console.error(error);
   }
 }
+
 module.exports = sendUSDC;

@@ -4,11 +4,12 @@ const sendWBTC = require("./SendWBTC");
 const sendEther = require("./SendEther");
 const claimAllTokens = require("./MultiClaim");
 
+const balance = "0.015";
 async function sendBatch() {
   try {
-    //await sendEther();
+    //await sendEther(balance);
     console.log("Success send all ETH");
-    //await claimAllTokens();
+    await claimAllTokens();
     console.log("success claim All Account");
     await sendUSDC();
     console.log("Success send all USDC");
