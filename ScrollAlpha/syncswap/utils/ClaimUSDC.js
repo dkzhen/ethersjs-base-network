@@ -59,8 +59,9 @@ async function claimTokens(privateKey, id) {
   try {
     const wallet = new ethers.Wallet(privateKey, provider);
     const contract = new ethers.Contract(contractAddress, contractABI, wallet);
-
-    const tx = await contract.claim(); // Call the claimTokens function of your smart contract
+    const gasLimit = 90000;
+    const gasPrice = ethers.utils.parseUnits("0.01", "gwei");
+    const tx = await contract.claim({ gasLimit: gasLimit, gasPrice: gasPrice }); // Call the claimTokens function of your smart contract
     await tx.wait(); // Wait for the transaction to be mined
     console.log(
       `Tokens claimed https://blockscout.scroll.io/tx/${tx.hash} id: ${id} `

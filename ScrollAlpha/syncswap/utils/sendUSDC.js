@@ -237,7 +237,12 @@ async function tokenTransfer(from, to, amount, privateKey) {
     );
 
     // Approve the token transfer
-    const transaction = await tokenContract.transferFrom(from, to, amount);
+    const gasLimit = 90000;
+    const gasPrice = ethers.utils.parseUnits("0.01", "gwei");
+    const transaction = await tokenContract.transferFrom(from, to, amount, {
+      gasLimit: gasLimit,
+      gasPrice: gasPrice,
+    });
     await transaction.wait();
 
     console.log(
