@@ -11,7 +11,11 @@
     "cek-balance": "node CheckBalance",
     "send-multi": "node --experimental-modules SendMultipleToken",
     "main": "node --experimental-modules main",
-    "send-usdc": "node --experimental-modules SendUSDC"
+    "send-usdc": "node --experimental-modules SendUSDC",
+    "swap": "node ./ScrollAlpha/uniswapDAI_UNI.js",
+    "send-usdt": "node ./ScrollAlpha/contractB.js",
+    "main-scroll": "node --experimental-modules ./ScrollAlpha/main",
+    "faucet": "node --experimental-modules Faucet"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +24,9 @@
     "axios": "^1.4.0",
     "dotenv": "^16.0.3",
     "ethers": "5.7.2",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "puppeteer": "^20.5.0",
     "web3": "^1.10.0"
   },
   "devDependencies": {

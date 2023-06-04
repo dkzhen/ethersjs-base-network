@@ -30,7 +30,7 @@ async function generateAndSaveAccounts(numAccounts, fileName) {
   );
 }
 
-const numAccounts = 100; // Specify the number of accounts to generate
-const fileName = "config-batch-100.json"; // Specify the file name for the JSON file
+const numAccounts = 2; // Specify the number of accounts to generate
+const fileName = "config.json"; // Specify the file name for the JSON file
 
 generateAndSaveAccounts(numAccounts, fileName);
