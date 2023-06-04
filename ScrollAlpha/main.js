@@ -1,5 +1,5 @@
 const FaucetV1 = require("./syncswap/FaucetV1");
-const axios = require ("axios")
+const axios = require("axios")
 async function main() {
   try {
     await FaucetV1();
