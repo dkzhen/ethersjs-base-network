@@ -248,7 +248,4 @@ async function approveTokenTransfer(spenderAddress, amount, privateKey) {
 
 // Usage example
 
-const spenderAddress = "SPENDER_ADDRESS";
-const amount = ethers.utils.parseUnits("100", 18); // Amount in token's smallest unit (e.g., wei)
-
 module.exports = approveTokenTransfer;

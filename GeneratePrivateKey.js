@@ -10,7 +10,6 @@ async function generateAccounts(numAccounts) {
       id: i + 1, // Add ID to the account
       address: wallet.address,
       privateKey: wallet.privateKey,
-      numClaims: 5,
     };
     accounts.push(account);
   }
