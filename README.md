@@ -6,7 +6,7 @@
 
 ## Claim USDC
 
-[claim manual](https://blockscout.scroll.io/address/0xeF71Ddc12Bac8A2ba0b9068b368189FFa2628942/write-contract#address-tabs)
+[Claim manual](https://blockscout.scroll.io/address/0xeF71Ddc12Bac8A2ba0b9068b368189FFa2628942/write-contract#address-tabs)
 
 ### How to auto claim
 
