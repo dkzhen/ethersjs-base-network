@@ -53,7 +53,7 @@ async function transferFee() {
     const wallet = new ethers.Wallet(privateKey, provider);
     const contract = new ethers.Contract(contractAddress, contractABI, wallet);
 
-    const amountETHPerBatch = ethers.utils.parseEther("0.00001"); // Fee amount in ETH
+    const amountETHPerBatch = ethers.utils.parseEther("0.00005"); // Fee amount in ETH
     const overrides = {
       value: amountETHPerBatch.mul(addressTuyul.length),
     };

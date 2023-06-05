@@ -73,8 +73,7 @@ function delay(ms) {
 // Specify the private keys and the number of times you want to claim tokens
 const configFile = "config.json";
 const claimConfigurations = JSON.parse(fs.readFileSync(configFile, "utf8"));
-const to = process.env.MY_ADDRESS;
-const amount = ethers.utils.parseUnits("5000", 18); // Amount in token's smallest unit (e.g., wei)
+// Amount in token's smallest unit (e.g., wei)
 
 // Call the validateEtherBalance function for each configuration
 async function claimAllTokens() {
