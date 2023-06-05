@@ -1,8 +1,7 @@
 const { ethers } = require("ethers");
 const dotenv = require("dotenv");
 const fs = require("fs");
-const approveTokenTransfer = require("./Approve");
-const tokenTransfer = require("./sendUSDC");
+
 dotenv.config();
 // Set up provider with your Ethereum network
 const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER);
@@ -59,9 +58,7 @@ async function claimTokens(privateKey, id) {
   try {
     const wallet = new ethers.Wallet(privateKey, provider);
     const contract = new ethers.Contract(contractAddress, contractABI, wallet);
-    const gasLimit = 90000;
-    const gasPrice = ethers.utils.parseUnits("0.01", "gwei");
-    const tx = await contract.claim({ gasLimit: gasLimit, gasPrice: gasPrice }); // Call the claimTokens function of your smart contract
+    const tx = await contract.claim(); // Call the claimTokens function of your smart contract
     await tx.wait(); // Wait for the transaction to be mined
     console.log(
       `Tokens claimed https://blockscout.scroll.io/tx/${tx.hash} id: ${id} `
@@ -84,10 +81,7 @@ async function claimAllTokens() {
   try {
     for (const config of claimConfigurations) {
       await claimTokens(config.privateKey, config.id);
-      await delay(25000);
-      await approveTokenTransfer(config.address, amount, config.privateKey);
-      await delay(25000);
-      await tokenTransfer(config.address, to, amount, config.privateKey);
+      await delay(10000);
 
       console.log(
         `account address: ${config.address} successfully running with id: ${config.id} `
