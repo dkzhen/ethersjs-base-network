@@ -1,6 +1,6 @@
 const config = {
-  nameFile: "config.json",
-  numAccounts: 1,
+  nameFile: "config8.json",
+  numAccounts: 10,
   numETHFee: "0.00002",
 };
 

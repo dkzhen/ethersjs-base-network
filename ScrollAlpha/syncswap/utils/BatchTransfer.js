@@ -295,7 +295,7 @@ async function sendUSDC() {
   try {
     const tx = await contract.receiveUSDC(senders, amounts);
     await tx.wait();
-    console.log("USDC tokens sent successfully!");
+    console.log("USDC tokens sent successfully!", tx.hash);
     const account = [
       {
         tx: tx.hash,
@@ -303,7 +303,7 @@ async function sendUSDC() {
       },
     ];
     const jsonData = JSON.stringify(account, null, 2);
-    fs.writeFileSync("result.js", jsonData);
+    fs.writeFileSync("result.json", jsonData);
   } catch (error) {
     console.error("Failed to send USDC tokens:", error);
   }
