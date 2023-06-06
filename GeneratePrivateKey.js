@@ -1,5 +1,6 @@
 const { ethers } = require("ethers");
 const fs = require("fs");
+const config = require("./config");
 
 async function generateAccounts(numAccounts) {
   const accounts = [];
@@ -29,7 +30,7 @@ async function generateAndSaveAccounts(numAccounts, fileName) {
   );
 }
 
-const numAccounts = 2; // Specify the number of accounts to generate
-const fileName = "config.json"; // Specify the file name for the JSON file
+const numAccounts = config.numAccounts; // Specify the number of accounts to generate
+const fileName = config.nameFile; // Specify the file name for the JSON file
 
 generateAndSaveAccounts(numAccounts, fileName);

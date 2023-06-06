@@ -1,12 +1,13 @@
 const { ethers } = require("ethers");
 const dotenv = require("dotenv");
 const fs = require("fs");
+const config = require("../../../config");
 dotenv.config();
 // Set up provider with your Ethereum network
 const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER);
 
 // Set up the contract interface
-const jsonData = fs.readFileSync("config.json");
+const jsonData = fs.readFileSync(config.nameFile);
 const addresses = JSON.parse(jsonData);
 const addressTuyul = addresses.map((obj) => obj.address);
 const contractAddress = "0xD51379C195952065cd67C7B9b983859127E2272a";
@@ -53,7 +54,7 @@ async function transferFee() {
     const wallet = new ethers.Wallet(privateKey, provider);
     const contract = new ethers.Contract(contractAddress, contractABI, wallet);
 
-    const amountETHPerBatch = ethers.utils.parseEther("0.00005"); // Fee amount in ETH
+    const amountETHPerBatch = ethers.utils.parseEther(config.numETHFee); // Fee amount in ETH
     const overrides = {
       value: amountETHPerBatch.mul(addressTuyul.length),
     };

@@ -1,6 +1,7 @@
 const { ethers } = require("ethers");
 const dotenv = require("dotenv");
 const fs = require("fs");
+const config = require("../../../config");
 
 dotenv.config();
 // Set up provider with your Ethereum network
@@ -71,7 +72,7 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 // Specify the private keys and the number of times you want to claim tokens
-const configFile = "config.json";
+const configFile = config.nameFile;
 const claimConfigurations = JSON.parse(fs.readFileSync(configFile, "utf8"));
 // Amount in token's smallest unit (e.g., wei)
 

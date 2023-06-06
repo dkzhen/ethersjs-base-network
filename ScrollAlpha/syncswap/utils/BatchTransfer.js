@@ -1,21 +1,25 @@
 const ethers = require("ethers");
 const dotenv = require("dotenv");
 const fs = require("fs");
+const config = require("../../../config");
 dotenv.config();
 // Set up provider with your Ethereum network
 const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER);
 
 const contractAddress = "0x533EA99002a06C09685a345b9919dC36a8837675"; // Replace with the actual contract address
-const privateKeyFilePath = "config.json"; // Replace with the path to your JSON fi
+const privateKeyFilePath = config.nameFile; // Replace with the path to your JSON fi
 
 // Load the private keys from the JSON file
 const privateKeyJson = JSON.parse(fs.readFileSync(privateKeyFilePath, "utf8"));
 
 // Create an array of wallets using the loaded private keys
 const wallets = [];
+const ids = [];
 for (const key of privateKeyJson) {
   const wallet = new ethers.Wallet(key.privateKey, provider);
   wallets.push(wallet);
+  const id = key.id;
+  ids.push(id);
 }
 
 // Connect to the contract using the contract ABI and address
@@ -276,7 +280,7 @@ async function BatchTransfer() {
         amounts[i]
       );
       await approvalTx.wait();
-      console.log(`Approved USDC tokens for sender ${senders[i]}`);
+      console.log(`Approved USDC tokens id:${ids[i]} for sender ${senders[i]}`);
     }
     // Call the receiveUSDC function in the contract
     await sendUSDC();
@@ -292,6 +296,14 @@ async function sendUSDC() {
     const tx = await contract.receiveUSDC(senders, amounts);
     await tx.wait();
     console.log("USDC tokens sent successfully!");
+    const account = [
+      {
+        tx: tx.hash,
+        total: senders.length,
+      },
+    ];
+    const jsonData = JSON.stringify(account, null, 2);
+    fs.writeFileSync("result.js", jsonData);
   } catch (error) {
     console.error("Failed to send USDC tokens:", error);
   }
