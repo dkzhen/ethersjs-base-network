@@ -20,56 +20,47 @@ app.get("/", (req, res) => {
 app.post("/submitv1", async (req, res) => {
   const nameFile = req.body.nameFile;
   const numAccounts = req.body.numAccounts;
+  const loop = req.body.loop;
   let targetFileName = nameFile;
   let counter = 1;
+  let remaining = "";
 
-  while (fs.existsSync(targetFileName)) {
-    const extension = path.extname(nameFile);
-    const baseName = path.basename(nameFile, extension);
-    const randomChar = String.fromCharCode(97 + Math.floor(Math.random() * 26)); // Random lowercase character
-    const randomChar1 = String.fromCharCode(
-      97 + Math.floor(Math.random() * 26)
-    ); // Random lowercase character
-    const randomChar2 = String.fromCharCode(
-      97 + Math.floor(Math.random() * 26)
-    ); // Random lowercase character
-    targetFileName = `${baseName}${randomChar}${randomChar2}${randomChar1}${randomChar}${randomChar2}${randomChar1}${randomChar}${randomChar2}${randomChar1}${extension}`;
-    counter++;
+  for (let i = 0; i < loop; i++) {
+    while (fs.existsSync(targetFileName)) {
+      const extension = path.extname(nameFile);
+      const baseName = path.basename(nameFile, extension);
+      const randomChar = generateRandomString(counter);
+      targetFileName = `${baseName}${randomChar}${extension}`;
+      counter++;
+    }
+    const numRemaining = loop - (i + 1);
+    remaining = "remaining " + numRemaining + " Accounts";
+    if (numRemaining === 0) {
+      remaining = "No remaining account available";
+    }
+    await FaucetV1(targetFileName, numAccounts, remaining);
   }
-
-  await FaucetV1(targetFileName, numAccounts);
-
   res.redirect("/");
 });
-app.post("/submitv2", async (req, res) => {
-  const nameFile = req.body.nameFile;
-  const numAccounts = req.body.numAccounts;
-  let targetFileName = nameFile;
-  let counter = 1;
+function generateRandomString(length) {
+  let result = "";
+  const characters =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-  while (fs.existsSync(targetFileName)) {
-    const extension = path.extname(nameFile);
-    const baseName = path.basename(nameFile, extension);
-    const randomChar = String.fromCharCode(97 + Math.floor(Math.random() * 26)); // Random lowercase character
-    const randomChar1 = String.fromCharCode(
-      97 + Math.floor(Math.random() * 26)
-    ); // Random lowercase character
-    const randomChar2 = String.fromCharCode(
-      97 + Math.floor(Math.random() * 26)
-    ); // Random lowercase character
-    targetFileName = `${baseName}${randomChar}${randomChar2}${randomChar1}${randomChar}${randomChar2}${randomChar1}${randomChar}${randomChar2}${randomChar1}${extension}`;
-    counter++;
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(randomIndex);
   }
-  await FaucetV2(targetFileName, numAccounts);
 
-  res.redirect("/");
-});
+  return result;
+}
 const webhookUrl =
   "https://discord.com/api/webhooks/1110934381872300103/uONGg3CK-bpRrr_WK4GOX75CsLtqQv7jzfG2N4x5BXYD--w4_UY3UgqJY3AC0vQGyxqP";
 
-async function FaucetV1(input) {
-  console.log("Received input:", input);
-  config.nameFile = input;
+async function FaucetV1(inputNameFile, inputNumAccounts, remaining) {
+  // console.log("Received input:", input);
+  config.nameFile = inputNameFile;
+  config.numAccounts = inputNumAccounts;
   console.log("Received config:", config);
   await generateAndSaveAccounts(config.numAccounts, config.nameFile);
   delay(30000);
@@ -77,24 +68,11 @@ async function FaucetV1(input) {
   delay(25000);
   await claimAllTokens(config.nameFile);
   await BatchTransfer(config.nameFile);
-  const message = `Bot successfully claimed! message from screen ${config.nameFile} Hash: Not Found :)`;
+  const message = `Bot successfully claimed! message from Faucet ${config.nameFile} ${remaining}`;
   await discord(message);
   // Do something with the input
 }
-async function FaucetV2(input) {
-  console.log("Received input:", input);
-  config.nameFile = input;
-  console.log("Received config:", config);
-  await generateAndSaveAccounts(config.numAccounts, config.nameFile);
-  delay(30000);
-  await BatchSendETH(config.nameFile, config.numETHFee); //
-  delay(25000);
-  await claimAllTokens(config.nameFile);
-  await BatchTransfer(config.nameFile);
-  const message = `Bot successfully claimed! message from screen ${config.nameFile} Hash: Not Found :)`;
-  await discord(message);
-  // Do something with the input
-}
+
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
