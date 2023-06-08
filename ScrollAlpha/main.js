@@ -2,6 +2,7 @@ const FaucetV1 = require("./syncswap/FaucetV1");
 const axios = require("axios");
 const fs = require("fs");
 const chokidar = require("chokidar");
+const config = require("../config");
 
 const resultFilePath = "result.json";
 
@@ -29,7 +30,7 @@ async function main() {
       const txid = resultJson.map((obj) => obj.tx);
       const total = resultJson.map((obj) => obj.total);
 
-      const message = `Bot successfully claimed! Total ${total} account. Hash: https://blockscout.scroll.io/tx/${txid}`;
+      const message = `Bot successfully claimed! message from screen ${config.nameFile} Total ${total} account. Hash: https://blockscout.scroll.io/tx/${txid}`;
       await sendDiscordAlert(message);
       // console.log(message);
     }, 2000); // Adjust the delay time as needed

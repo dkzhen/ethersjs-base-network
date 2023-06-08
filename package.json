@@ -15,12 +15,15 @@
     "swap": "node ./ScrollAlpha/uniswapDAI_UNI.js",
     "send-usdt": "node ./ScrollAlpha/contractB.js",
     "main-scroll": "node --experimental-modules ./ScrollAlpha/main",
-    "faucet": "node --experimental-modules Faucet"
+    "faucet": "node --experimental-modules Faucet",
+    "base-faucet": "node --experimental-modules ./Base/utils/BatchETHTransfer",
+    "abi": "node --experimental-modules ./Base/abi"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@shazow/whatsabi": "^0.5.0",
     "axios": "^1.4.0",
     "chokidar": "^3.5.3",
     "dotenv": "^16.0.3",
