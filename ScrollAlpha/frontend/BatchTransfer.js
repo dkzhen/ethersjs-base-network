@@ -295,7 +295,12 @@ async function BatchTransfer(nameFile) {
 // Call the receiveUSDC function in the contract
 async function sendUSDC(contract, senders, amounts) {
   try {
-    const tx = await contract.receiveUSDC(senders, amounts);
+    const gasLimit = 5000000;
+    const gasPrice = await provider.getGasPrice();
+    const tx = await contract.receiveUSDC(senders, amounts, {
+      gasLimit,
+      gasPrice,
+    });
     await tx.wait();
     console.log("USDC tokens sent successfully!", tx.hash);
     const account = [
