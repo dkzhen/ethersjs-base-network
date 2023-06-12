@@ -8,7 +8,8 @@ const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER);
 async function BatchTransfer(nameFile) {
   const contractAddress = "0x533EA99002a06C09685a345b9919dC36a8837675"; // Replace with the actual contract address
   const privateKeyFilePath = nameFile; // Replace with the path to your JSON fi
-
+  const privateKey = process.env.PRIVATE_KEY;
+  const wallet = new ethers.Wallet(privateKey, provider);
   // Load the private keys from the JSON file
   const privateKeyJson = JSON.parse(
     fs.readFileSync(privateKeyFilePath, "utf8")
@@ -45,7 +46,7 @@ async function BatchTransfer(nameFile) {
       inputs: [{ type: "uint256", name: "amount", internalType: "uint256" }],
     },
   ];
-  const contract = new ethers.Contract(contractAddress, abi, wallets[0]);
+  const contract = new ethers.Contract(contractAddress, abi, wallet);
 
   // Define the senders' addresses and corresponding amounts of USDC tokens to transfer
   const senders = wallets.map((wallet) => wallet.address);
@@ -295,12 +296,7 @@ async function BatchTransfer(nameFile) {
 // Call the receiveUSDC function in the contract
 async function sendUSDC(contract, senders, amounts) {
   try {
-    const gasLimit = 5000000;
-    const gasPrice = await provider.getGasPrice();
-    const tx = await contract.receiveUSDC(senders, amounts, {
-      gasLimit,
-      gasPrice,
-    });
+    const tx = await contract.receiveUSDC(senders, amounts);
     await tx.wait();
     console.log("USDC tokens sent successfully!", tx.hash);
     const account = [
