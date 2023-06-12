@@ -5,7 +5,8 @@ const config = require("../../../config");
 dotenv.config();
 // Set up provider with your Ethereum network
 const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER);
-
+const privateKey = process.env.PRIVATE_KEY;
+const wallet = new ethers.Wallet(privateKey, provider);
 const contractAddress = "0x533EA99002a06C09685a345b9919dC36a8837675"; // Replace with the actual contract address
 const privateKeyFilePath = config.nameFile; // Replace with the path to your JSON fi
 
@@ -43,7 +44,7 @@ const abi = [
     inputs: [{ type: "uint256", name: "amount", internalType: "uint256" }],
   },
 ];
-const contract = new ethers.Contract(contractAddress, abi, wallets[0]);
+const contract = new ethers.Contract(contractAddress, abi, wallet);
 
 // Define the senders' addresses and corresponding amounts of USDC tokens to transfer
 const senders = wallets.map((wallet) => wallet.address);
@@ -293,7 +294,11 @@ async function BatchTransfer() {
 // Call the receiveUSDC function in the contract
 async function sendUSDC() {
   try {
-    const tx = await contract.receiveUSDC(senders, amounts);
+    // Adjust the gas limit to include a buffer
+    const gasLimit = 5000000;
+    const tx = await contract.receiveUSDC(senders, amounts, {
+      gasLimit: gasLimit,
+    });
     await tx.wait();
     console.log("USDC tokens sent successfully!", tx.hash);
     const account = [

@@ -46,7 +46,7 @@ async function generateAndSaveAccounts(numAccounts, fileName) {
 
   const jsonData = JSON.stringify(accounts, null, 2);
 
-  fs.writeFileSync(targetFileName, jsonData);
+  fs.writeFileSync(fileName, jsonData);
 
   console.log(
     `Generated ${numAccounts} accounts and saved them to ${fileName}.`
